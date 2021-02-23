@@ -53,19 +53,33 @@ class DeliverymanManagementController {
       email: Yup.string().email(),
     });
 
-    if (!schema.isValid()) {
+    if (!schema.isValid() && !req.file) {
       return res.json({ error: 'Validation fails' });
     }
 
-    const delivery = await Deliveryman.findByPk(req.params.id);
+    const deliveryman = await Deliveryman.findByPk(req.params.id);
 
-    if (!delivery) {
+    if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman not found' });
+    }
+
+    if (req.file) {
+      const { originalname: name, filename: path } = req.file;
+
+      const file = await File.create({
+        name,
+        path,
+      });
+
+      deliveryman.avatar_id = file.id;
+      await deliveryman.save();
+
+      return res.json(file);
     }
 
     const { email } = req.body;
 
-    if (email !== delivery.email) {
+    if (email !== deliveryman.email) {
       const emailTaken = await Deliveryman.findOne({
         where: {
           email,
@@ -77,7 +91,7 @@ class DeliverymanManagementController {
       }
     }
 
-    const { id, name } = await delivery.update(req.body);
+    const { id, name } = await deliveryman.update(req.body);
 
     return res.json({ id, name, email });
   }

@@ -23,7 +23,11 @@ const upload = multer(multerConfig);
 routes.post('/sessions', SessionController.store);
 
 routes.get('/deliveryman/:id/deliveries', DeliveryController.index);
-routes.put('/deliveryman/:id/:delivery', DeliveryController.update);
+routes.put(
+  '/deliveryman/:id/:delivery',
+  upload.single('file'),
+  DeliveryController.update
+);
 
 /**
  * Auth routes
@@ -43,6 +47,11 @@ routes.put('/admin/recipients', RecipientManagementController.update);
 
 routes.get('/admin/deliveryman', DeliverymanManagementController.index);
 routes.post('/admin/deliveryman', DeliverymanManagementController.store);
+routes.put(
+  '/admin/deliveryman/:id',
+  upload.single('file'),
+  DeliverymanManagementController.update
+);
 routes.delete('/admin/deliveryman/:id', DeliverymanManagementController.delete);
 
 routes.get('/admin/delivery', DeliveryManagementController.index);

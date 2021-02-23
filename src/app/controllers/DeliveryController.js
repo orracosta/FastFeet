@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { setSeconds, setMinutes, setHours, isAfter, isBefore } from 'date-fns';
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
+import File from '../models/File';
 
 class DeliveryController {
   async index(req, res) {
@@ -46,12 +47,6 @@ class DeliveryController {
   }
 
   async update(req, res) {
-    const { withdraw } = req.body || false;
-
-    if (!withdraw) {
-      return res.status(400).json({ error: 'Invalid operation' });
-    }
-
     const deliveryman = await Deliveryman.findByPk(req.params.id);
 
     if (!deliveryman) {
@@ -64,7 +59,23 @@ class DeliveryController {
       return res.status(400).json({ error: 'Invalid delivery' });
     }
 
-    const schedule = ['08:00', '19:00'];
+    if (req.file) {
+      const { originalname: name, filename: path } = req.file;
+
+      const file = await File.create({
+        name,
+        path,
+      });
+
+      delivery.signature_id = file.id;
+      delivery.end_date = new Date();
+
+      await delivery.save();
+
+      return res.json(file);
+    }
+
+    const schedule = ['08:00', '18:00'];
     const dateNow = new Date();
 
     const [startOfDay, endOfDay] = schedule.map((time) => {
