@@ -1,8 +1,8 @@
 import * as Yup from 'yup';
 
-import Recipient from '../models/Recipient';
+import Recipient from '../../models/Recipient';
 
-class RecipientController {
+class RecipientManagementController {
   async index(req, res) {
     const recipients = await Recipient.findAll();
 
@@ -66,4 +66,4 @@ class RecipientController {
   }
 }
 
-export default new RecipientController();
+export default new RecipientManagementController();

@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
 
-import Deliveryman from '../models/Deliveryman';
-import File from '../models/File';
+import Deliveryman from '../../models/Deliveryman';
+import File from '../../models/File';
 
-class DeliverymanController {
+class DeliverymanManagementController {
   async index(req, res) {
     const { page = 1 } = req.query;
 
@@ -83,16 +83,16 @@ class DeliverymanController {
   }
 
   async delete(req, res) {
-    const delivery = await Deliveryman.findByPk(req.params.id);
+    const deliveryman = await Deliveryman.findByPk(req.params.id);
 
-    if (!delivery) {
+    if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman not found' });
     }
 
-    await delivery.destroy();
+    await deliveryman.destroy();
 
-    return res.json({ error: 'Deliveryman removed with success' });
+    return res.json({ success: 'Deliveryman removed with success' });
   }
 }
 
-export default new DeliverymanController();
+export default new DeliverymanManagementController();
