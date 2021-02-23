@@ -11,13 +11,30 @@ import SessionController from './app/controllers/SessionController';
 import RecipientManagementController from './app/controllers/Management/RecipientManagementController';
 import DeliverymanManagementController from './app/controllers/Management/DeliverymanManagementController';
 import DeliveryManagementController from './app/controllers/Management/DeliveryManagementController';
+import DeliveryController from './app/controllers/DeliveryController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
 
+/**
+ * Public routes
+ */
+
 routes.post('/sessions', SessionController.store);
 
+routes.get('/deliveryman/:id/deliveries', DeliveryController.index);
+routes.put('/deliveryman/:id/:delivery', DeliveryController.update);
+
+/**
+ * Auth routes
+ */
+
 routes.use(authMiddleware);
+
+/**
+ * Admin routes
+ */
+
 routes.use(adminMiddleware);
 
 routes.get('/admin/recipients', RecipientManagementController.index);
